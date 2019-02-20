@@ -6,4 +6,5 @@ Google Colab
 Annotations
 - https://github.com/chakki-works/doccano/
 
-Test edit
+Urteilsdatenbank im JSON Format
+http://prinz.law/decisions.zip

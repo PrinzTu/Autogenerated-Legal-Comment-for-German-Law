@@ -69,32 +69,38 @@ with open(file_path, 'r') as f:
                         
                         law_cits = [[r for r in m.references] for m in law_markers]
                         lit_cits = lit_pattern.findall(sent)
-                        print(wordSim.staticmethod(count))
+                        
                         pos = case['text'].find(sent)
                         case_length = len(case['text'])
                         rel_pos = pos / case_length
-                        law_cit_count =  min(len(law_cits) - 1, 0)  # Do not count itself
+                                                
+                        law_cit_count =  len(law_cits) # min(len(law_cits) - 1, 0)  # Do not count itself
+                        lit_cit_count = len(lit_cits)
+                        case_cit_count = len(case_markers)
+                        sim = wordSim.staticmethod(count)                                             
                         
                         sent_data = {
-                            'case_cit_count': len(case_markers), 
+                            'case_cit_count': case_cit_count, 
                             'law_cit_count': law_cit_count,
-                            'lit_cit_count': len(lit_cits),
+                            'lit_cit_count': lit_cits_count,
                             'pos': pos, 
                             'rel_pos': rel_pos,
                             'case_length': case_length,
-                            'score': law_cit_count,
-                            'text': sent,
-                            'cat': nlp(sent).cats[predict_label]
+                            'text': sent
+                            'sim': sim,
+                            'cat': nlp(sent).cats['POSITIVE']
                         }
+                        # normalize all sub-scores to 0-1
+                        # 
+                        sent_data['score'] = min(lit_cit_count / 10, 1)\
+                                            * min(case_cit_count / 10, 1)\
+                                            * 2 / float(law_cit_count) * sent_data['cat'] * sim
                         
                         sents.append(sent_data)
                         
                         case['fundstellen'][fs_i]['rank_score'] = sent_data['score']
+                        out.append(json.dumps(case['fundstellen'][fs_i]))
                         
-                        has_score = True
-        if has_score:
-            out.append(json.dumps(case))
-            
         #print('###########')
     
  
@@ -105,3 +111,8 @@ with open(os.path.join(data_dir, 'cases_with_scores.jsonl'), 'w') as f:
     f.write('\n'.join(out))
     
 print('writing done')
+
+# Sort sentences by score        
+sorted_sents = sorted(sents, key=lambda k: k['score'], reverse=True) 
+
+print(json.dumps(sorted_sents, indent=4))

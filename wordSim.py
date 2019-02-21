@@ -1,27 +1,3 @@
-# from summa import keywords
-# from summa import summarizer
-# import pandas as pd
-# import time
-import nltk
-import re
-import operator
-import json
-
-from nltk.corpus import stopwords
-nltk.download('stopwords')
-
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
-z = [(0, 0)]
-print(len(z))
-
-sample_text = "Das Vorabentscheidungsersuchen betrifft die Auslegung von Art. 15 Abs. 1 Buchst. c der Verordnung (EG) Nr. 44/2001 des Rates vom 22. Dezember 2000 über die gerichtliche Zuständigkeit und die Anerkennung und Vollstreckung von Entscheidungen in Zivil‑ und Handelssachen (ABl. 2001, L 12, S. 1) in Verbindung mit Art. 16 Abs. 1 der Verordnung."
-
-sample_text2 = "Dieses Ersuchen ergeht im Rahmen eines Rechtsstreits zwischen Herrn Hobohm, der seinen Wohnsitz in Deutschland hat, auf der einen Seite und der Benedikt Kampik Ltd & Co. KG, Herrn Kampik und der Mar Mediterraneo Werbe- und Vertriebsgesellschaft für Immobilien SL, die alle in Spanien ansässig sind, auf der anderen Seite über die Rückzahlung von Geldern, die Herr Hobohm Herrn Kampik überlassen hatte."
-
-sample_text3= "Dieses Ersuchen ergeht im Rahmen eines Rechtsstreits zwischen Herrn Hobohm, der seinen Wohnsitz in Deutschland hat, auf der einen Seite und  der anderen Seite über die Rückzahlung von Geldern, die Herr Hobohm Herrn Kampik überlassen hatte."
-
 
 def staticmethod(index):
     fullMatrix = False
@@ -40,7 +16,7 @@ def staticmethod(index):
     z = []
     k = 5
     minMaxScore = 0.0
-    threshold = 0.0
+    threshold = 0.1
     # print("Find top-"+ str(k) + " candiates for: ")
     # print(documents[index])
     t = index
@@ -60,16 +36,19 @@ def staticmethod(index):
                     z[0] = (i,score)
                     z = sorted(z, key=lambda x: x[1])
 
-    # print("Top candiates: ")
     sum = 0
+    count = 0
     for i,score in z:
-        # print("(" + documents[i] +","+ str(score) +")")
         sum += score
+        count += 1
+        if score > 0.7:
+            sum += score
+            count += 1
 
-    if len(z) < 1:
+    if count < 1:
         return 0.0
     else:
-        return sum/len(z)
+        return sum/count
 
 
 # documents=(sample_text,sample_text2)

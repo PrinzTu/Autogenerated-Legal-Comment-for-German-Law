@@ -40,7 +40,7 @@ def staticmethod(index):
     z = []
     k = 5
     minMaxScore = 0.0
-    threshold = 0.4
+    threshold = 0.0
     # print("Find top-"+ str(k) + " candiates for: ")
     # print(documents[index])
     t = index

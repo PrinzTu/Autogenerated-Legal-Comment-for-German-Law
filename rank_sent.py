@@ -82,19 +82,20 @@ with open(file_path, 'r') as f:
                         sent_data = {
                             'case_cit_count': case_cit_count, 
                             'law_cit_count': law_cit_count,
-                            'lit_cit_count': lit_cits_count,
+                            'lit_cit_count': lit_cit_count,
                             'pos': pos, 
                             'rel_pos': rel_pos,
                             'case_length': case_length,
-                            'text': sent
+                            'text': sent,
                             'sim': sim,
                             'cat': nlp(sent).cats['POSITIVE']
                         }
                         # normalize all sub-scores to 0-1
                         # 
-                        sent_data['score'] = min(lit_cit_count / 10, 1)\
-                                            * min(case_cit_count / 10, 1)\
-                                            * 2 / float(law_cit_count) * sent_data['cat'] * sim
+                        sent_data['score'] = min((1 + lit_cit_count) / 10, 1)\
+                                            * min((1 + case_cit_count) / 30, 1)\
+                                            * 2 / float(law_cit_count) * sent_data['cat'] * (sim + sim)
+
                         
                         sents.append(sent_data)
                         

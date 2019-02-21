@@ -13,6 +13,9 @@ import spacy
 from utils import preprocessing
 from refex.extractor import RefExtractor
 
+# local deps
+import wordSim
+
 law_extractor = RefExtractor()
 law_extractor.do_law_refs = True
 law_extractor.do_case_refs = False
@@ -41,7 +44,7 @@ sents = []
 sents_dict = {}
 out = []
 
-
+count = 0
 with open(file_path, 'r') as f:
     for case_json in [next(f) for x in range(n)]:  # Read line-by-line the first n lines (one case per line)
         case = json.loads(case_json)  # Parse JSON
@@ -49,7 +52,7 @@ with open(file_path, 'r') as f:
         
         for fs_i, fs in enumerate(case['fundstellen']):  # Iterate over citations
         #for fs in case['fundstellen']:  # Iterate over citations
-            
+            count += 1
             if 'gesetze' in fs:
                 for g in fs['gesetze']:
                     # Test if it refers to the requested law
@@ -66,7 +69,7 @@ with open(file_path, 'r') as f:
                         
                         law_cits = [[r for r in m.references] for m in law_markers]
                         lit_cits = lit_pattern.findall(sent)
-                        
+                        print(wordSim.staticmethod(count))
                         pos = case['text'].find(sent)
                         case_length = len(case['text'])
                         rel_pos = pos / case_length
